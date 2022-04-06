@@ -48,6 +48,7 @@ class Receiver(Thread):
         # imagePath = "/Users/prasannasmac/Documents/Capstone/test_image3.jpeg"
 
         # image = cv2.imread(imagePath)
+        # print('In image detection')
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         # global flag
         # if flag:
@@ -60,9 +61,11 @@ class Receiver(Thread):
         faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
         faces = faceCascade.detectMultiScale(
             gray,
-            scaleFactor=1.3,
-            minNeighbors=3,
-            minSize=(30, 30)
+            scaleFactor=1.5,
+            minNeighbors=5,
+            minSize=(30, 30),
+            flags=(cv2.CASCADE_FIND_BIGGEST_OBJECT + cv2.CASCADE_SCALE_IMAGE + cv2.CASCADE_DO_ROUGH_SEARCH
+                   + cv2.CASCADE_DO_CANNY_PRUNING)
         )
 
         # print("[INFO] Found {0} Faces.".format(len(faces)))
@@ -73,14 +76,16 @@ class Receiver(Thread):
             # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             roi_color = image[y:y + h, x:x + w]
             face_list.append(roi_color)
+            # print(self.flag)
             if self.flag:
                 self.diff = image
                 self.flag = False
-            if (self.mse(self.diff, image)) > 3000:
+            print(self.mse(self.diff, image))
+            if (self.mse(self.diff, image)) > 11000:
                 self.diff = image
                 # print(type(roi_color))
                 # print(len(face_list))
-                print("[INFO] Object found. Saving locally.")
+                print("[INFO] Object found. Sending to cloud.")
                 # cv2.imwrite(str(w) + str(h) + '_faces.jpg', roi_color)
                 if roi_color is not None:
                     self.packetize_images(roi_color)

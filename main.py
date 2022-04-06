@@ -30,7 +30,7 @@ class Main():
         cloud_socket.connect(('127.0.0.1', port))
 
         # Receiving Data from the edge device
-        LOCALHOST = "127.0.0.1"
+        LOCALHOST = "192.168.1.247"
         PORT = 8089
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
